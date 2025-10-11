@@ -7,4 +7,10 @@ export interface Movie {
     overview: string;
     release_date: string;
     vote_average: number;
+
+    
 }
+export interface SelectedType {
+  selected: number;
+}
+
