@@ -10,18 +10,20 @@ export default function SearchBar ({onSubmit}:
     SearchBarProps){ 
 const [query, setQuery] = useState('');
 
-      const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {e.preventDefault();
-        const trimmedQuery = query.trim();
+      const handleAction = async (formData: FormData) => {
+        const queryTrimmed = (formData.get('query') as string).trim();
+      
+        
 
-          if (!query) { toast.error('Please enter your search query.');
+          if (!queryTrimmed) { toast.error('Please enter your search query.');
               return;
             }
 
-            onSubmit(trimmedQuery);
+            onSubmit(queryTrimmed);
 
             setQuery('');
             
-     }
+     };
     return (
     <header className={styles.header}>
       <div className={styles.container}>
@@ -33,7 +35,7 @@ const [query, setQuery] = useState('');
         >
           Powered by TMDB
         </a>
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form className={styles.form} action={handleAction}>
           <input
             className={styles.input}
             type="text"

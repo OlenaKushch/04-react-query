@@ -10,7 +10,5 @@ export interface Movie {
 
     
 }
-export interface SelectedType {
-  selected: number;
-}
+
 

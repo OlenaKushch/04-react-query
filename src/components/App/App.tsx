@@ -1,7 +1,7 @@
-import { useState } from 'react'; 
+import { useState, useEffect } from 'react'; 
 import {useQuery} from '@tanstack/react-query';
 import ReactPaginate from 'react-paginate';
-import type {SelectedType} from '../../types/movie'
+
 import toast, {Toaster} from 'react-hot-toast';
 import type {Movie} from '../../types/movie';
 import {getMovies} from '../../services/movieService';
@@ -22,10 +22,12 @@ const {
   data,
   isLoading,
   isError,
+  isSuccess
 } = useQuery({
   queryKey: ['movies', query, page],
   queryFn: () => getMovies(query, page),
   enabled: Boolean(query),
+  placeholderData: (previousData) => previousData,
 });
 
 const handleSearch = (newQuery: string) => {
@@ -38,9 +40,13 @@ const handleSearch = (newQuery: string) => {
  const handleSelectMovie = (movie: Movie) => setSelectedMovie(movie);
  const handleCloseModal = () => setSelectedMovie(null);
  
- if (data && data.results.length === 0) {
-  toast('No movies found for your request.');
+ useEffect(() => {
+  if (isSuccess && data?.results.length === 0) {
+     toast('No movies found for your request.');
  }
+  }, [isSuccess, data]);
+
+ 
  return (
     <div className={styles.app}>
       <Toaster/>
@@ -57,7 +63,7 @@ const handleSearch = (newQuery: string) => {
              pageCount={data.total_pages}
              pageRangeDisplayed={5}
              marginPagesDisplayed={1}
-             onPageChange={(event: SelectedType) => setPage(event.selected + 1)}
+             onPageChange={(event: {selected: number}) => setPage(event.selected + 1)}
              forcePage={page - 1}
              containerClassName={styles.pagination}
              activeClassName={styles.active}
@@ -68,7 +74,7 @@ const handleSearch = (newQuery: string) => {
     <MovieGrid movies={data.results} onSelect={handleSelectMovie} />
     
 </>
-      )};
+      )}
 
 {selectedMovie && (
       <MovieModal movie={selectedMovie} onClose={handleCloseModal} />
